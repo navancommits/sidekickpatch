@@ -6,7 +6,6 @@ using Sitecore.Security.Accounts;
 using Sitecore.Shell.Web;
 using Sitecore.Sites;
 using System;
-//using System.Runtime.Remoting.Contexts;
 using System.Web;
 using System.Web.Mvc;
 
@@ -17,9 +16,10 @@ namespace Custom.Sitecore.Processor.CustomPipeline
 
         public void Process(ActionExecutingArgs args)
         {            
-            var path = args.Context.HttpContext?.Request?.Url?.AbsolutePath.ToLower() ?? string.Empty;
-            Log.Info("navanlog- EnsureLoggedInForPreview invocation " + path, this);
-            if (path.Contains("/scs/"))
+            var controllerName = args.Context.RouteData.Values["controller"]?.ToString().Trim().ToLowerInvariant();
+            var actionName = args.Context.RouteData.Values["action"]?.ToString();
+
+            if (controllerName.StartsWith("sidekick.")) //make it unique for sidekick call
                 return;
 
             if (Context.PageMode.IsNormal || Context.IsLoggedIn)
